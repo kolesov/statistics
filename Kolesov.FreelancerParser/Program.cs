@@ -59,7 +59,7 @@ namespace Kolesov.FreelancerParser
                             skills.Add(skill.InnerText);
                         }
                         Console.WriteLine(href);
-                        if (budget.Contains("AUD"))
+                        if (budget.Contains("AUD") || budget.Contains("NZD"))
                         {
                             var fromAddress = new MailAddress("kolesov.statistics@gmail.com", "Statistics");
                             var toAddress = new MailAddress("sergey.kolesov.gs@gmail.com", "Sergey Kolesov");
