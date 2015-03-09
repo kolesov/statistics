@@ -12,17 +12,24 @@ namespace Kolesov.FreelancerParser
     {
         static string GetPage(string url)
         {
-            WebRequest request = WebRequest.Create(url);
-            request.Method = "GET";
-            WebResponse response = request.GetResponse();
-            Stream stream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(stream);
-            string content = reader.ReadToEnd();
-            reader.Close();
-            response.Close();
+            try
+            {
+                WebRequest request = WebRequest.Create(url);
+                request.Method = "GET";
+                WebResponse response = request.GetResponse();
+                Stream stream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(stream);
+                string content = reader.ReadToEnd();
+                reader.Close();
+                response.Close();
 
-            Thread.Sleep(3000);
-            return content;
+                Thread.Sleep(3000);
+                return content;
+            }
+            catch
+            {
+                return "";
+            }
         }
 
         static void Main(string[] args)
