@@ -47,8 +47,17 @@ namespace Kolesov.FreelancerParser
 
                     if (!projects.Contains(href))
                     {
-                        CQ projectPage = GetPage(href);
+                        string page = GetPage(href);
+                        File.WriteAllText("current.html", page);
+                        CQ projectPage = page;
+                        var title = projectPage[".project-view-project-title"].Text();
                         var budget = projectPage[".project-statistic-value"].Text();
+                        var description = projectPage[".project-description p"].Text();
+                        var skills = new List<string>();
+                        foreach (var skill in projectPage["ul.project-view-landing-required-skill a.simple-tag"])
+                        {
+                            skills.Add(skill.InnerText);
+                        }
                         Console.WriteLine(href);
                         if (budget.Contains("AUD"))
                         {
@@ -56,7 +65,7 @@ namespace Kolesov.FreelancerParser
                             var toAddress = new MailAddress("sergey.kolesov.gs@gmail.com", "Sergey Kolesov");
                             var fromPassword = "kolesov.password";
                             var subject = "New project";
-                            var body = href;
+                            var body = title+description+budget+string.Join(", ", skills)+"\n\n"+href;
 
                             var smtp = new SmtpClient
                             {
