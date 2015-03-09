@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Mail;
 using System.Threading;
 
 namespace Kolesov.FreelancerParser
@@ -43,7 +44,32 @@ namespace Kolesov.FreelancerParser
                         var budget = projectPage[".project-statistic-value"].Text();
                         Console.WriteLine(href);
                         if (budget.Contains("AUD"))
-                            System.Windows.Forms.MessageBox.Show(href);
+                        {
+                            var fromAddress = new MailAddress("kolesov.statistics@gmail.com", "Statistics");
+                            var toAddress = new MailAddress("sergey.kolesov.gs@gmail.com", "Sergey Kolesov");
+                            var fromPassword = "kolesov.password";
+                            var subject = "New project";
+                            var body = href;
+
+                            var smtp = new SmtpClient
+                            {
+                                Host = "smtp.gmail.com",
+                                Port = 587,
+                                EnableSsl = true,
+                                DeliveryMethod = SmtpDeliveryMethod.Network,
+                                UseDefaultCredentials = false,
+                                Credentials = new NetworkCredential(fromAddress.Address, fromPassword),
+                                Timeout = 20000
+                            };
+                            using (var message = new MailMessage(fromAddress, toAddress)
+                            {
+                                Subject = subject,
+                                Body = body
+                            })
+                            {
+                                smtp.Send(message);
+                            }
+                        }
 
                         projects.Add(href);
                     }
