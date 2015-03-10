@@ -1,4 +1,6 @@
 ﻿using CsQuery;
+using Kolesov.Domain.Interfaces;
+using Kolesov.Repository;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -57,6 +59,11 @@ namespace Kolesov.FreelancerParser
                         foreach (var skill in projectPage["ul.project-view-landing-required-skill a.simple-tag"])
                         {
                             skills.Add(skill.InnerText);
+                        }
+                        ISkillsRepository skillsRepository = new SkillsRepository();
+                        foreach (var skill in skills)
+                        {
+                            skillsRepository.Add(skill);
                         }
                         Console.WriteLine(href);
                         if (budget.Contains("AUD") || budget.Contains("NZD"))

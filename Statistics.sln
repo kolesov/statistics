@@ -5,6 +5,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kolesov.SeekParser", "Koles
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kolesov.FreelancerParser", "Kolesov.FreelancerParser\Kolesov.FreelancerParser.csproj", "{D025C5E6-3CC9-4A15-A099-C29B3A45CD27}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kolesov.Domain", "Kolesov.Domain\Kolesov.Domain.csproj", "{9BFFBEC9-A751-480E-91F8-C5037E513CDF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kolesov.Repository", "Kolesov.Repository\Kolesov.Repository.csproj", "{FCF3C0A6-5DD3-4F1A-92A0-55E63574DFCE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +23,14 @@ Global
 		{D025C5E6-3CC9-4A15-A099-C29B3A45CD27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D025C5E6-3CC9-4A15-A099-C29B3A45CD27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D025C5E6-3CC9-4A15-A099-C29B3A45CD27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BFFBEC9-A751-480E-91F8-C5037E513CDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BFFBEC9-A751-480E-91F8-C5037E513CDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BFFBEC9-A751-480E-91F8-C5037E513CDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BFFBEC9-A751-480E-91F8-C5037E513CDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCF3C0A6-5DD3-4F1A-92A0-55E63574DFCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCF3C0A6-5DD3-4F1A-92A0-55E63574DFCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCF3C0A6-5DD3-4F1A-92A0-55E63574DFCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCF3C0A6-5DD3-4F1A-92A0-55E63574DFCE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
