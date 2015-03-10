@@ -44,7 +44,7 @@ namespace Kolesov.Repository
         public bool Exists(string skill)
         {
             if (File.Exists(filename))
-                return File.ReadAllLines(filename).Select(x => x.Equals(skill)).Any();
+                return File.ReadAllLines(filename).Where(x => x.Equals(skill)).Any();
             else
                 return false;
         }
