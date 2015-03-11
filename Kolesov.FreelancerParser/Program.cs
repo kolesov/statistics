@@ -25,7 +25,7 @@ namespace Kolesov.FreelancerParser
                 reader.Close();
                 response.Close();
 
-                Thread.Sleep(3000);
+                Thread.Sleep(1500);
                 return content;
             }
             catch
@@ -36,18 +36,20 @@ namespace Kolesov.FreelancerParser
 
         static void Main(string[] args)
         {
-            var projects = new List<string>();
+            ISkillsRepository skillsRepository = new SkillsRepository();
+            IProjectRepository projectRepository = new ProjectRepository();
 
             while (true)
             {
                 CQ mainPage = GetPage(@"http://www.freelancer.com.au/jobs/1/");
+                Console.WriteLine("Projects List loaded");
 
                 foreach (var item in mainPage["tr.project-details a[data-id]"])
                 {
                     var href = item.Attributes["href"];
                     href = href.Replace("https", "http").Replace("/projects/", "/jobs/").Replace(".html", "/");
 
-                    if (!projects.Contains(href))
+                    if (!projectRepository.Exists(href))
                     {
                         string page = GetPage(href);
                         File.WriteAllText("current.html", page);
@@ -60,7 +62,6 @@ namespace Kolesov.FreelancerParser
                         {
                             skills.Add(skill.InnerText);
                         }
-                        ISkillsRepository skillsRepository = new SkillsRepository();
                         foreach (var skill in skills)
                         {
                             skillsRepository.Add(skill);
@@ -94,7 +95,7 @@ namespace Kolesov.FreelancerParser
                             }
                         }
 
-                        projects.Add(href);
+                        projectRepository.Add(href);
                     }
                 }
             }
