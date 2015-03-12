@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Threading;
+using System.Linq;
 
 namespace Kolesov.FreelancerParser
 {
@@ -25,7 +26,7 @@ namespace Kolesov.FreelancerParser
                 reader.Close();
                 response.Close();
 
-                Thread.Sleep(1500);
+                Thread.Sleep(2500);
                 return content;
             }
             catch
@@ -38,6 +39,9 @@ namespace Kolesov.FreelancerParser
         {
             ISkillsRepository skillsRepository = new SkillsRepository();
             IProjectRepository projectRepository = new ProjectRepository();
+            INotificationService notificationService = new SendEmailService();
+
+            var interestedSkills = new List<string>() { ".NET", "ASP.NET", "HTML5", "MVC", "C# Programming", "CSS", "HTML", "Javascript", "Software Architecture", "Bootstrap", "AJAX", "jQuery / Prototype", "Web Scraping" };
 
             while (true)
             {
@@ -67,32 +71,10 @@ namespace Kolesov.FreelancerParser
                             skillsRepository.Add(skill);
                         }
                         Console.WriteLine(href);
-                        if (budget.Contains("AUD") || budget.Contains("NZD"))
+                        if (skills.Intersect(interestedSkills).Any() && (budget.Contains("AUD") || budget.Contains("NZD")))
                         {
-                            var fromAddress = new MailAddress("kolesov.statistics@gmail.com", "Statistics");
-                            var toAddress = new MailAddress("sergey.kolesov.gs@gmail.com", "Sergey Kolesov");
-                            var fromPassword = "kolesov.password";
-                            var subject = "New project";
-                            var body = title+description+budget+string.Join(", ", skills)+"\n\n"+href;
-
-                            var smtp = new SmtpClient
-                            {
-                                Host = "smtp.gmail.com",
-                                Port = 587,
-                                EnableSsl = true,
-                                DeliveryMethod = SmtpDeliveryMethod.Network,
-                                UseDefaultCredentials = false,
-                                Credentials = new NetworkCredential(fromAddress.Address, fromPassword),
-                                Timeout = 20000
-                            };
-                            using (var message = new MailMessage(fromAddress, toAddress)
-                            {
-                                Subject = subject,
-                                Body = body
-                            })
-                            {
-                                smtp.Send(message);
-                            }
+                            string message = title+description+budget+string.Join(", ", skills)+"\n\n"+href;
+                            notificationService.SendNotification(message);
                         }
 
                         projectRepository.Add(href);
