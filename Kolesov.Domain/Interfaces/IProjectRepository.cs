@@ -8,7 +8,7 @@ namespace Kolesov.Domain.Interfaces
 {
     public interface IProjectRepository
     {
-        void Add(string projectId);
+        void Add(string projectId, string[] skills);
         bool Exists(string projectId);
     }
 }

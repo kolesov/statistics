@@ -77,7 +77,7 @@ namespace Kolesov.FreelancerParser
                             notificationService.SendNotification(message);
                         }
 
-                        projectRepository.Add(href);
+                        projectRepository.Add(href, skills.ToArray());
                     }
                 }
             }
