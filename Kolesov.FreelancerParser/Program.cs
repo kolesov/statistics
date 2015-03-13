@@ -42,6 +42,7 @@ namespace Kolesov.FreelancerParser
             INotificationService notificationService = new SendEmailService();
 
             var interestedSkills = new List<string>() { ".NET", "ASP.NET", "HTML5", "MVC", "C# Programming", "CSS", "HTML", "Javascript", "Software Architecture", "Bootstrap", "AJAX", "jQuery / Prototype", "Web Scraping" };
+            var excludeSkills = new List<string>() { "PHP", "Wordpress" };
 
             while (true)
             {
@@ -71,7 +72,7 @@ namespace Kolesov.FreelancerParser
                             skillsRepository.Add(skill);
                         }
                         Console.WriteLine(href);
-                        if (skills.Intersect(interestedSkills).Any() && (budget.Contains("AUD") || budget.Contains("NZD")))
+                        if (skills.Intersect(interestedSkills).Any() && !skills.Intersect(excludeSkills).Any() && (budget.Contains("AUD") || budget.Contains("NZD")))
                         {
                             string message = title+description+budget+string.Join(", ", skills)+"\n\n"+href;
                             notificationService.SendNotification(message);
