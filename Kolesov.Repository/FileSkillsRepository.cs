@@ -8,35 +8,43 @@ using System.Threading.Tasks;
 
 namespace Kolesov.Repository
 {
-    public class ProjectRepository : IProjectRepository
+    public class FileSkillsRepository : ISkillsRepository
     {
-        private string filename = "projects.txt";
-        public void Add(string projectId, string[] skills)
+        private string filename = "skills.txt";
+        public List<string> GetAll()
         {
-            var stringToWrite = projectId + "," + string.Join("|", skills);
+            if (File.Exists(filename))
+                return File.ReadAllLines(filename).ToList();
+            else
+                return new List<string>();
+        }
+
+        public void Add(string skill)
+        {
             if (!File.Exists(filename))
             {
                 using (StreamWriter sw = File.CreateText(filename))
                 {
-                    sw.WriteLine(stringToWrite);
+                    sw.WriteLine(skill);
                 }
             }
             else
             {
-                if (!Exists(projectId))
+                if (!Exists(skill))
                 {
                     using (StreamWriter sw = File.AppendText(filename))
                     {
-                        sw.WriteLine(stringToWrite);
+                        sw.WriteLine(skill);
                     }
                 }
             }
         }
 
-        public bool Exists(string projectId)
+
+        public bool Exists(string skill)
         {
             if (File.Exists(filename))
-                return File.ReadAllLines(filename).Where(x => x.Contains(projectId)).Any();
+                return File.ReadAllLines(filename).Where(x => x.Equals(skill)).Any();
             else
                 return false;
         }

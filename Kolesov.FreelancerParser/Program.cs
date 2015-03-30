@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Threading;
 using System.Linq;
+using Kolesov.Domain.Models;
 
 namespace Kolesov.FreelancerParser
 {
@@ -37,8 +38,8 @@ namespace Kolesov.FreelancerParser
 
         static void Main(string[] args)
         {
-            ISkillsRepository skillsRepository = new SkillsRepository();
-            IProjectRepository projectRepository = new ProjectRepository();
+            ISkillsRepository skillsRepository = new FileSkillsRepository();
+            IProjectRepository projectRepository = new FileProjectRepository();
             INotificationService notificationService = new SendEmailService();
 
             var interestedSkills = new List<string>() { ".NET", "ASP.NET", "HTML5", "MVC", "C# Programming", "CSS", "HTML", "Javascript", "Software Architecture", "Bootstrap", "AJAX", "jQuery / Prototype", "Web Scraping" };
@@ -53,8 +54,12 @@ namespace Kolesov.FreelancerParser
                 {
                     var href = item.Attributes["href"];
                     href = href.Replace("https", "http").Replace("/projects/", "/jobs/").Replace(".html", "/");
+                    var project = new Project()
+                    {
+                        Id = href
+                    };
 
-                    if (!projectRepository.Exists(href))
+                    if (!projectRepository.Exists(project))
                     {
                         string page = GetPage(href);
                         File.WriteAllText("current.html", page);
@@ -62,23 +67,22 @@ namespace Kolesov.FreelancerParser
                         var title = projectPage[".project-view-project-title"].Text();
                         var budget = projectPage[".project-statistic-value"].Text();
                         var description = projectPage[".project-description p"].Text();
-                        var skills = new List<string>();
                         foreach (var skill in projectPage["ul.project-view-landing-required-skill a.simple-tag"])
                         {
-                            skills.Add(skill.InnerText);
+                            project.Skills.Add(skill.InnerText);
                         }
-                        foreach (var skill in skills)
+                        foreach (var skill in project.Skills)
                         {
                             skillsRepository.Add(skill);
                         }
                         Console.WriteLine(href);
-                        if (skills.Intersect(interestedSkills).Any() && !skills.Intersect(excludeSkills).Any() && (budget.Contains("AUD") || budget.Contains("NZD")))
+                        if (project.Skills.Intersect(interestedSkills).Any() && !project.Skills.Intersect(excludeSkills).Any()/* && (budget.Contains("AUD") || budget.Contains("NZD"))*/)
                         {
-                            string message = title+description+budget+string.Join(", ", skills)+"\n\n"+href;
+                            string message = title + description + budget + string.Join(", ", project.Skills) + "\n\n" + href;
                             notificationService.SendNotification(message);
                         }
 
-                        projectRepository.Add(href, skills.ToArray());
+                        projectRepository.Add(project);
                     }
                 }
             }

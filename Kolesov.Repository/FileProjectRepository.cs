@@ -1,4 +1,5 @@
 ﻿using Kolesov.Domain.Interfaces;
+using Kolesov.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,43 +9,35 @@ using System.Threading.Tasks;
 
 namespace Kolesov.Repository
 {
-    public class SkillsRepository : ISkillsRepository
+    public class FileProjectRepository : IProjectRepository
     {
-        private string filename = "skills.txt";
-        public List<string> GetAll()
+        private string filename = "projects.txt";
+        public void Add(Project project)
         {
-            if (File.Exists(filename))
-                return File.ReadAllLines(filename).ToList();
-            else
-                return new List<string>();
-        }
-
-        public void Add(string skill)
-        {
+            var stringToWrite = project.Id + "," + string.Join("|", project.Skills);
             if (!File.Exists(filename))
             {
                 using (StreamWriter sw = File.CreateText(filename))
                 {
-                    sw.WriteLine(skill);
+                    sw.WriteLine(stringToWrite);
                 }
             }
             else
             {
-                if (!Exists(skill))
+                if (!Exists(project))
                 {
                     using (StreamWriter sw = File.AppendText(filename))
                     {
-                        sw.WriteLine(skill);
+                        sw.WriteLine(stringToWrite);
                     }
                 }
             }
         }
 
-
-        public bool Exists(string skill)
+        public bool Exists(Project project)
         {
             if (File.Exists(filename))
-                return File.ReadAllLines(filename).Where(x => x.Equals(skill)).Any();
+                return File.ReadAllLines(filename).Where(x => x.Contains(project.Id)).Any();
             else
                 return false;
         }
