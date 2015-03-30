@@ -14,7 +14,7 @@ namespace Kolesov.Repository
         private string filename = "projects.txt";
         public void Add(Project project)
         {
-            var stringToWrite = project.Id + "," + string.Join("|", project.Skills);
+            var stringToWrite = project.Link + "," + string.Join("|", project.Skills);
             if (!File.Exists(filename))
             {
                 using (StreamWriter sw = File.CreateText(filename))
@@ -37,7 +37,7 @@ namespace Kolesov.Repository
         public bool Exists(Project project)
         {
             if (File.Exists(filename))
-                return File.ReadAllLines(filename).Where(x => x.Contains(project.Id)).Any();
+                return File.ReadAllLines(filename).Where(x => x.Contains(project.Link)).Any();
             else
                 return false;
         }

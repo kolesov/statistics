@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kolesov.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace Kolesov.Domain.Interfaces
 {
     public interface INotificationService
     {
-        void SendNotification(string message);
+        void SendNotification(User sendToUser, string message);
     }
 }

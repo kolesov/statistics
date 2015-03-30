@@ -1,4 +1,5 @@
 ﻿using Kolesov.Domain.Interfaces;
+using Kolesov.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,10 @@ namespace Kolesov.FreelancerParser
 {
     public class SendEmailService : INotificationService
     {
-        public void SendNotification(string message)
+        public void SendNotification(User sendToUser, string message)
         {
             var fromAddress = new MailAddress("kolesov.statistics@gmail.com", "Statistics");
-            var toAddress = new MailAddress("sergey.kolesov.gs@gmail.com", "Sergey Kolesov");
+            var toAddress = new MailAddress(sendToUser.Email, sendToUser.Name);
             var fromPassword = "kolesov.password";
             var subject = "New project";
             var body = message;

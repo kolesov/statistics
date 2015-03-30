@@ -42,8 +42,15 @@ namespace Kolesov.FreelancerParser
             IProjectRepository projectRepository = new FileProjectRepository();
             INotificationService notificationService = new SendEmailService();
 
-            var interestedSkills = new List<string>() { ".NET", "ASP.NET", "HTML5", "MVC", "C# Programming", "CSS", "HTML", "Javascript", "Software Architecture", "Bootstrap", "AJAX", "jQuery / Prototype", "Web Scraping" };
-            var excludeSkills = new List<string>() { "PHP", "Wordpress" };
+            var users = new List<User>();
+            users.Add(new User()
+            {
+                Id = 1,
+                Email = "sergey.kolesov.gs@gmail.com",
+                Name = "Sergey",
+                InterestedSkills = new List<string>() { ".NET", "ASP.NET", "HTML5", "MVC", "C# Programming", "CSS", "HTML", "Javascript", "Software Architecture", "Bootstrap", "AJAX", "jQuery / Prototype", "Web Scraping" },
+                ExcludeSkills = new List<string>() { "PHP", "Wordpress" }
+            });
 
             while (true)
             {
@@ -56,7 +63,7 @@ namespace Kolesov.FreelancerParser
                     href = href.Replace("https", "http").Replace("/projects/", "/jobs/").Replace(".html", "/");
                     var project = new Project()
                     {
-                        Id = href
+                        Link = href
                     };
 
                     if (!projectRepository.Exists(project))
@@ -76,10 +83,14 @@ namespace Kolesov.FreelancerParser
                             skillsRepository.Add(skill);
                         }
                         Console.WriteLine(href);
-                        if (project.Skills.Intersect(interestedSkills).Any() && !project.Skills.Intersect(excludeSkills).Any()/* && (budget.Contains("AUD") || budget.Contains("NZD"))*/)
+
+                        foreach (var user in users)
                         {
-                            string message = title + description + budget + string.Join(", ", project.Skills) + "\n\n" + href;
-                            notificationService.SendNotification(message);
+                            if (project.Skills.Intersect(user.InterestedSkills).Any() && !project.Skills.Intersect(user.ExcludeSkills).Any())
+                            {
+                                string message = title + description + budget + string.Join(", ", project.Skills) + "\n\n" + href;
+                                notificationService.SendNotification(user, message);
+                            }
                         }
 
                         projectRepository.Add(project);
