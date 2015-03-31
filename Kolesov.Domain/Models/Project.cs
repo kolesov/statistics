@@ -22,5 +22,10 @@ namespace Kolesov.Domain.Models
         public List<string> Skills { get; set; }
         public string Budget { get; set; }
         public string Country { get; set; }
+
+        public string ToEmailMessage()
+        {
+            return Title + Description + Budget + string.Join(", ", Skills) + "\n\n" + Link;
+        }
     }
 }

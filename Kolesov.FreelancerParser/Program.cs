@@ -75,11 +75,20 @@ namespace Kolesov.FreelancerParser
             users.Add(new User()
             {
                 Id = 1,
-                Email = "sergey.kolesov.gs@gmail.com",
+                Emails = new List<string>() { "sergey.kolesov.gs@gmail.com" },
                 Name = "Sergey",
-                InterestedSkills = new List<string>() { ".NET", "ASP.NET", "HTML5", "MVC", "C# Programming", "CSS", "HTML", "Javascript", "Software Architecture", "Bootstrap", "AJAX", "jQuery / Prototype", "Web Scraping" },
+                InterestedSkills = new List<string>() { ".NET", "ASP.NET", "HTML5", "MVC", "C# Programming"/*, "CSS", "HTML", "Javascript", "Software Architecture", "Bootstrap", "AJAX", "jQuery / Prototype", "Web Scraping"*/ },
                 ExcludeSkills = new List<string>() { "PHP", "Wordpress" },
-                KeyWords = new List<string>() { "Australia", "New Zealand", "*" }
+                KeyWords = new List<string>() { "Australia", "New Zealand" }
+            });
+            users.Add(new User()
+            {
+                Id = 2,
+                Emails = new List<string>() { "sergey.kolesov.gs@gmail.com", "kamile-mamedova@mail.ru" },
+                Name = "Kamile",
+                InterestedSkills = new List<string>() { "Russian" },
+                ExcludeSkills = new List<string>() {  },
+                KeyWords = new List<string>() { "Russia", "Russian" }
             });
 
             while (true)
@@ -101,9 +110,9 @@ namespace Kolesov.FreelancerParser
                         string page = GetPage(href);
                         File.WriteAllText("current.html", page);
                         CQ projectPage = page;
-                        var title = projectPage[".project-view-project-title"].Text();
-                        var budget = projectPage[".project-statistic-value"].Text();
-                        var description = projectPage[".project-description p"].Text();
+                        project.Title = projectPage[".project-view-project-title"].Text();
+                        project.Budget = projectPage[".project-statistic-value"].Text();
+                        project.Description = projectPage[".project-description p"].Text();
                         foreach (var skill in projectPage["ul.project-view-landing-required-skill a.simple-tag"])
                         {
                             project.Skills.Add(skill.InnerText);
@@ -117,8 +126,7 @@ namespace Kolesov.FreelancerParser
                                 && !project.Skills.Intersect(user.ExcludeSkills).Any())
                                 || SuitableKeyWords(project, user.KeyWords, user.MinusKeyWords))
                             {
-                                string message = title + description + budget + string.Join(", ", project.Skills) + "\n\n" + href;
-                                notificationService.SendNotification(user, message);
+                                notificationService.SendNotification(user, project.ToEmailMessage());
                             }
                         }
 

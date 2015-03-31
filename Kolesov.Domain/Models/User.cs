@@ -10,7 +10,7 @@ namespace Kolesov.Domain.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Email { get; set; }
+        public List<string> Emails { get; set; }
         public List<string> InterestedSkills { get; set; }
         public List<string> ExcludeSkills { get; set; }
         public List<string> KeyWords { get; set; }
