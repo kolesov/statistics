@@ -13,5 +13,7 @@ namespace Kolesov.Domain.Models
         public string Email { get; set; }
         public List<string> InterestedSkills { get; set; }
         public List<string> ExcludeSkills { get; set; }
+        public List<string> KeyWords { get; set; }
+        public List<string> MinusKeyWords { get; set; }
     }
 }

@@ -36,6 +36,35 @@ namespace Kolesov.FreelancerParser
             }
         }
 
+        static bool SuitableKeyWords(Project project, List<string> keyWords, List<string> minusKeyWords)
+        {
+            bool result = false;
+
+            if (keyWords != null)
+            {
+                foreach (var keyword in keyWords)
+                {
+                    if (project.Title.ToLower().Contains(keyword.ToLower()) || project.Description.ToLower().Contains(keyword.ToLower()))
+                    {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+            if (minusKeyWords != null)
+            {
+                foreach (var keyword in minusKeyWords)
+                {
+                    if (project.Title.ToLower().Contains(keyword.ToLower()) || project.Description.ToLower().Contains(keyword.ToLower()))
+                    {
+                        result = false;
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
+
         static void Main(string[] args)
         {
             ISkillsRepository skillsRepository = new FileSkillsRepository();
@@ -49,7 +78,8 @@ namespace Kolesov.FreelancerParser
                 Email = "sergey.kolesov.gs@gmail.com",
                 Name = "Sergey",
                 InterestedSkills = new List<string>() { ".NET", "ASP.NET", "HTML5", "MVC", "C# Programming", "CSS", "HTML", "Javascript", "Software Architecture", "Bootstrap", "AJAX", "jQuery / Prototype", "Web Scraping" },
-                ExcludeSkills = new List<string>() { "PHP", "Wordpress" }
+                ExcludeSkills = new List<string>() { "PHP", "Wordpress" },
+                KeyWords = new List<string>() { "Australia", "New Zealand", "*" }
             });
 
             while (true)
@@ -77,16 +107,15 @@ namespace Kolesov.FreelancerParser
                         foreach (var skill in projectPage["ul.project-view-landing-required-skill a.simple-tag"])
                         {
                             project.Skills.Add(skill.InnerText);
-                        }
-                        foreach (var skill in project.Skills)
-                        {
-                            skillsRepository.Add(skill);
+                            skillsRepository.Add(skill.InnerText);
                         }
                         Console.WriteLine(href);
 
                         foreach (var user in users)
                         {
-                            if (project.Skills.Intersect(user.InterestedSkills).Any() && !project.Skills.Intersect(user.ExcludeSkills).Any())
+                            if ((project.Skills.Intersect(user.InterestedSkills).Any() 
+                                && !project.Skills.Intersect(user.ExcludeSkills).Any())
+                                || SuitableKeyWords(project, user.KeyWords, user.MinusKeyWords))
                             {
                                 string message = title + description + budget + string.Join(", ", project.Skills) + "\n\n" + href;
                                 notificationService.SendNotification(user, message);
