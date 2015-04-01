@@ -9,6 +9,7 @@ using System.Net.Mail;
 using System.Threading;
 using System.Linq;
 using Kolesov.Domain.Models;
+using Newtonsoft.Json;
 
 namespace Kolesov.FreelancerParser
 {
@@ -91,15 +92,17 @@ namespace Kolesov.FreelancerParser
                 KeyWords = new List<string>() { "Russia", "Russian" }
             });
 
+            string domain = "http://www.freelancer.com";
             while (true)
             {
-                CQ mainPage = GetPage(@"http://www.freelancer.com.au/jobs/1/");
+                var projectsJson = GetPage(domain+"/ajax/table/project_contest_datatable.php");
+                File.WriteAllText("projects.json", projectsJson);
+                var projects = JsonConvert.DeserializeObject<dynamic>(projectsJson);
                 Console.WriteLine("Projects List loaded");
 
-                foreach (var item in mainPage["tr.project-details a[data-id]"])
+                foreach (var item in projects.aaData)
                 {
-                    var href = item.Attributes["href"];
-                    href = href.Replace("https", "http").Replace("/projects/", "/jobs/").Replace(".html", "/");
+                    var href = domain + item[21]; // link from json array
                     var project = new Project()
                     {
                         Link = href
