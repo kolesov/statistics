@@ -100,8 +100,11 @@ namespace Kolesov.FreelancerParser
                 var projects = JsonConvert.DeserializeObject<dynamic>(projectsJson);
                 Console.WriteLine("Projects List loaded");
 
+                int i = 0;
                 foreach (var item in projects.aaData)
                 {
+                    i++;
+                    Console.WriteLine(i.ToString() + "/" + projects.aaData.Count);
                     var href = domain + item[21]; // link from json array
                     var project = new Project()
                     {
@@ -116,6 +119,10 @@ namespace Kolesov.FreelancerParser
                         project.Title = projectPage[".project-view-project-title"].Text();
                         project.Budget = projectPage[".project-statistic-value"].Text();
                         project.Description = projectPage[".project-description p"].Text();
+                        if (string.IsNullOrEmpty(project.Title))
+                        {
+                            Console.WriteLine("no title!");
+                        }
                         foreach (var skill in projectPage["ul.project-view-landing-required-skill a.simple-tag"])
                         {
                             project.Skills.Add(skill.InnerText);
