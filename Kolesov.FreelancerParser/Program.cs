@@ -95,8 +95,11 @@ namespace Kolesov.FreelancerParser
             string domain = "http://www.freelancer.com";
             while (true)
             {
+                string guid = Guid.NewGuid().ToString();
+                var projectsHtml = GetPage(domain + "/jobs/1/");
                 var projectsJson = GetPage(domain+"/ajax/table/project_contest_datatable.php");
-                File.WriteAllText("projects.json", projectsJson);
+                File.WriteAllText("projects"+guid+".html", projectsHtml);
+                File.WriteAllText("projects"+guid+".json", projectsJson);
                 var projects = JsonConvert.DeserializeObject<dynamic>(projectsJson);
                 Console.WriteLine("Projects List loaded");
 
