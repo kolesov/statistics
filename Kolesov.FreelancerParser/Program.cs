@@ -10,6 +10,7 @@ using System.Threading;
 using System.Linq;
 using Kolesov.Domain.Models;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace Kolesov.FreelancerParser
 {
@@ -27,8 +28,7 @@ namespace Kolesov.FreelancerParser
                 string content = reader.ReadToEnd();
                 reader.Close();
                 response.Close();
-
-                Thread.Sleep(2500);
+                Thread.Sleep(3000);
                 return content;
             }
             catch
@@ -95,19 +95,21 @@ namespace Kolesov.FreelancerParser
             string domain = "http://www.freelancer.com";
             while (true)
             {
-                string guid = Guid.NewGuid().ToString();
-                var projectsHtml = GetPage(domain + "/jobs/1/");
-                var projectsJson = GetPage(domain+"/ajax/table/project_contest_datatable.php");
-                File.WriteAllText("projects"+guid+".html", projectsHtml);
-                File.WriteAllText("projects"+guid+".json", projectsJson);
-                var projects = JsonConvert.DeserializeObject<dynamic>(projectsJson);
+                var html = GetPage(domain + "/jobs/1/");
+                var getJsonaaData = new Regex(@"var\s*aaData\s*=\s*(?<json>.*);");
+                var json = getJsonaaData.Match(html).Groups["json"].Value;
+                
+                var projects = JsonConvert.DeserializeObject<dynamic>(json);
                 Console.WriteLine("Projects List loaded");
 
+                if (projects == null)
+                    continue;
+
                 int i = 0;
-                foreach (var item in projects.aaData)
+                foreach (var item in projects)
                 {
                     i++;
-                    Console.WriteLine(i.ToString() + "/" + projects.aaData.Count);
+                    Console.WriteLine(i.ToString() + "/" + projects.Count);
                     var href = domain + item[21]; // link from json array
                     var project = new Project()
                     {
@@ -125,6 +127,7 @@ namespace Kolesov.FreelancerParser
                         if (string.IsNullOrEmpty(project.Title))
                         {
                             Console.WriteLine("no title!");
+                            File.WriteAllText("page_" + Guid.NewGuid().ToString() + ".html", page);
                         }
                         foreach (var skill in projectPage["ul.project-view-landing-required-skill a.simple-tag"])
                         {
