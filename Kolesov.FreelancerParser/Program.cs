@@ -124,15 +124,27 @@ namespace Kolesov.FreelancerParser
                         project.Title = projectPage[".project-view-project-title"].Text();
                         project.Budget = projectPage[".project-statistic-value"].Text();
                         project.Description = projectPage[".project-description p"].Text();
+                        var guid = Guid.NewGuid().ToString();
                         if (string.IsNullOrEmpty(project.Title))
                         {
-                            Console.WriteLine("no title!");
-                            File.WriteAllText("page_" + Guid.NewGuid().ToString() + ".html", page);
+                            File.WriteAllText("page_" + guid + "_notitle.html", page);
+                        }
+                        if (string.IsNullOrEmpty(project.Description))
+                        {
+                            File.WriteAllText("page_" + guid + "_nodescr.html", page);
+                        }
+                        if (string.IsNullOrEmpty(project.Budget))
+                        {
+                            File.WriteAllText("page_" + guid + "_nobudget.html", page);
                         }
                         foreach (var skill in projectPage["ul.project-view-landing-required-skill a.simple-tag"])
                         {
                             project.Skills.Add(skill.InnerText);
                             skillsRepository.Add(skill.InnerText);
+                        }
+                        if (project.Skills.Count == 0)
+                        {
+                            File.WriteAllText("page_" + guid + "_noskills.html", page);
                         }
                         Console.WriteLine(href);
 
